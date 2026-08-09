@@ -5,6 +5,7 @@ RULES:
 1. Strip out all redundant phrases, fluff, wordy transitions, and repetitive ideas.
 2. Keep the strong opening hook and the final conclusion intact.
 3. Make every single word count.
+4. PRESERVE the exact language ({{ language or "English" }}) and script of the current post.
 
 {% if additional_instructions %}
 ADDITIONAL SHORTENING GUIDANCE:

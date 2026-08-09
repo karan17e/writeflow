@@ -24,6 +24,12 @@ export const LENGTHS = [
   { value: 'Long', label: 'Long', desc: '~150-250 words' },
 ];
 
+export const LANGUAGES = [
+  { value: 'English', label: '🇬🇧 English' },
+  { value: 'Hindi', label: '🇮🇳 Hindi' },
+  { value: 'Hinglish', label: '🇮🇳 Hinglish' },
+];
+
 export const REFINEMENT_ACTIONS = [
   { id: 'regenerate', label: 'Regenerate', icon: 'RefreshCw', color: 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300' },
   { id: 'improve_hook', label: 'Improve Hook', icon: 'Sparkles', color: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200' },

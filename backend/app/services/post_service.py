@@ -48,15 +48,17 @@ class PostService:
         post_content: str,
         requirements: Dict[str, Any],
         validation_report: Dict[str, Any],
+        language: str = "English",
         provider_name: str | None = None
     ) -> str:
         """Applies a targeted edit pass to fix unsatisfied numeric requirements (e.g. emoji count) without rewriting the post."""
         logger.info("Executing targeted editing pass to satisfy user style requirements...")
         
         system_prompt = (
-            "You are a precise content editor. The user has requested exact formatting/emoji requirements. "
+            f"You are a precise content editor. The target language is {language}. "
+            "The user has requested exact formatting/emoji requirements. "
             "You MUST insert or adjust the exact requested number of emojis or hashtags naturally into the text. "
-            "Do NOT change the underlying topic, facts, or narrative."
+            f"Do NOT change the target language ({language}), underlying topic, facts, or narrative."
         )
         
         instructions = []
@@ -90,7 +92,7 @@ class PostService:
         user_prompt = (
             f"CURRENT POST:\n{post_content}\n\n"
             f"REQUIRED EDITS:\n- {instruction_text}\n\n"
-            f"CRITICAL: Do NOT change the topic or facts. Ensure the output post contains the EXACT requested number of emojis/hashtags.\n"
+            f"CRITICAL: Maintain the post strictly in {language}. Do NOT change the topic or facts. Ensure the output post contains the EXACT requested number of emojis/hashtags.\n"
             f"Return ONLY the final updated post text."
         )
 
@@ -234,7 +236,7 @@ class PostService:
     async def generate_post(req: GenerateRequest) -> PostResponse:
         logger.info(f"==================================================")
         logger.info(f"TOPIC RECEIVED: '{req.topic}'")
-        logger.info(f"POST TYPE: '{req.post_type}', TONE: '{req.tone}', AUDIENCE: '{req.target_audience}'")
+        logger.info(f"POST TYPE: '{req.post_type}', TONE: '{req.tone}', LANGUAGE: '{req.language}', AUDIENCE: '{req.target_audience}'")
         logger.info(f"WRITING STYLE INSTRUCTION: '{req.writing_style}'")
 
         system_prompt = PromptBuilder.get_system_prompt()
@@ -265,6 +267,7 @@ class PostService:
             topic=req.topic,
             post_type=req.post_type,
             tone=req.tone,
+            language=req.language,
             target_audience=req.target_audience,
             personal_context=req.personal_context,
             key_points=req.key_points,
@@ -274,7 +277,7 @@ class PostService:
             structure_override=(struct_name, struct_desc)
         )
 
-        logger.info(f"AI REQUEST CREATED: calling provider='{provider.provider_name}' with structure='{struct_name}'")
+        logger.info(f"AI REQUEST CREATED: calling provider='{provider.provider_name}' with structure='{struct_name}', language='{req.language}'")
         stage_1_res: AIResponse = await provider.generate(
             system_prompt=system_prompt,
             user_prompt=stage_1_user_prompt,
@@ -309,12 +312,13 @@ class PostService:
             fallback_struct = ("Conversational Reflection", "a simple, honest reflection without formulaic lists")
             corrective_instruction = (
                 f"\n\nCRITICAL CORRECTION REQUIRED:\n"
-                f"Write a simple, natural post strictly about '{req.topic}' without template formulas."
+                f"Write a simple, natural post strictly in {req.language} about '{req.topic}' without template formulas."
             )
             corrected_user_prompt = PromptBuilder.build_generation_prompt(
                 topic=req.topic,
                 post_type=req.post_type,
                 tone=req.tone,
+                language=req.language,
                 target_audience=req.target_audience,
                 personal_context=req.personal_context,
                 key_points=req.key_points,
@@ -341,12 +345,17 @@ class PostService:
                     post_content=draft_content,
                     requirements=style_requirements,
                     validation_report=style_report,
+                    language=req.language,
                     provider_name=req.provider
                 )
 
-        # STAGE 4: Editorial & Humanization Pass (passes req.writing_style so explicit rules are preserved)
+        # STAGE 4: Editorial & Humanization Pass (passes req.writing_style and req.language)
         logger.info("Executing Stage 4: Editorial & Humanization Pass")
-        stage_4_user_prompt = PromptBuilder.build_editor_pass_prompt(draft_content, writing_style=req.writing_style)
+        stage_4_user_prompt = PromptBuilder.build_editor_pass_prompt(
+            draft_content,
+            writing_style=req.writing_style,
+            language=req.language
+        )
         
         stage_4_res: AIResponse = await provider.generate(
             system_prompt=system_prompt,
@@ -366,11 +375,12 @@ class PostService:
                     post_content=final_content,
                     requirements=style_requirements,
                     validation_report=final_style_report,
+                    language=req.language,
                     provider_name=req.provider
                 )
 
         words = count_words(final_content)
-        logger.info(f"FINAL POST GENERATED ({words} words, {count_emojis(final_content)} emojis, {count_hashtags(final_content)} hashtags)")
+        logger.info(f"FINAL POST GENERATED ({words} words, language={req.language}, {count_emojis(final_content)} emojis, {count_hashtags(final_content)} hashtags)")
         logger.info(f"==================================================")
 
         return PostResponse(
@@ -385,6 +395,7 @@ class PostService:
                 "topic": req.topic,
                 "post_type": req.post_type,
                 "tone": req.tone,
+                "language": req.language,
                 "selected_structure": struct_name,
                 "has_custom_writing_style": bool(req.writing_style),
                 "parsed_style_requirements": style_requirements,
@@ -399,13 +410,14 @@ class PostService:
 
     @staticmethod
     async def refine_post(req: RefineRequest, action_name: str, template_filename: str, temperature: float = 0.7) -> PostResponse:
-        logger.info(f"Refining post with action='{action_name}'")
+        logger.info(f"Refining post with action='{action_name}', language='{req.language or 'English'}'")
 
         system_prompt = PromptBuilder.get_system_prompt()
         user_prompt = PromptBuilder.build_refinement_prompt(
             action_filename=template_filename,
             current_content=req.post,
-            additional_instructions=req.additional_instructions
+            additional_instructions=req.additional_instructions,
+            language=req.language or "English"
         )
 
         provider = get_ai_provider(req.provider)
@@ -425,6 +437,7 @@ class PostService:
                 "word_count": words,
                 "reading_time": calculate_reading_time(words),
                 "action": action_name,
+                "language": req.language or "English",
                 "provider": ai_res.provider,
                 "model": ai_res.model
             }

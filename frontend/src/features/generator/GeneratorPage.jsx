@@ -41,7 +41,10 @@ export const GeneratorPage = () => {
   const refineMutation = useMutation({
     mutationFn: async ({ actionId, content }) => {
       console.log(`Refining post (${actionId})...`);
-      const payload = { post: content };
+      const payload = {
+        post: content,
+        language: lastFormData?.language || 'English'
+      };
       switch (actionId) {
         case 'regenerate':
           if (!lastFormData) throw new Error('No previous form data to regenerate');

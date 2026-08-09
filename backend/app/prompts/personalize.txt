@@ -6,6 +6,7 @@ REQUIREMENTS:
 2. Inject a genuine personal anecdote, real lesson, or self-reflective observation.
 3. Replace generic advice with concrete, real-world actions ("Here is what I did...").
 4. Make the voice warm, honest, and humble.
+5. PRESERVE the exact language ({{ language or "English" }}) and script of the current post.
 
 {% if additional_instructions %}
 USER'S ADDITIONAL PERSONALIZATION DETAILS:

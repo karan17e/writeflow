@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { POST_TYPES, TONES, LENGTHS } from '../../utils/constants';
+import { POST_TYPES, TONES, LENGTHS, LANGUAGES } from '../../utils/constants';
 import { Button } from '../../components/Button';
 import { Textarea } from '../../components/Textarea';
 import { Select } from '../../components/Select';
@@ -13,6 +13,7 @@ export const InputForm = ({ onGenerate, isLoading }) => {
     topic: '',
     post_type: 'Story',
     tone: 'Conversational',
+    language: 'English',
     target_audience: '',
     personal_context: '',
     key_points: '',
@@ -173,8 +174,8 @@ export const InputForm = ({ onGenerate, isLoading }) => {
         error={error}
       />
 
-      {/* 2 & 3. Post Type & Tone Dropdowns */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* 2 & 3. Post Type, Tone & Language Dropdowns */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Select
           id="post_type"
           label="2. Post Type"
@@ -188,6 +189,13 @@ export const InputForm = ({ onGenerate, isLoading }) => {
           options={TONES}
           value={formData.tone}
           onChange={(e) => handleChange('tone', e.target.value)}
+        />
+        <Select
+          id="language"
+          label="LANGUAGE"
+          options={LANGUAGES}
+          value={formData.language}
+          onChange={(e) => handleChange('language', e.target.value)}
         />
       </div>
 

@@ -5,6 +5,7 @@ RULES FOR THE NEW HOOK:
 - Keep it under 2 lines.
 - Make it punchy, intriguing, or counter-intuitive.
 - DO NOT use clickbait, rhetorical questions, or generic phrases like "I'm excited to share...".
+- Maintain the exact same language ({{ language or "English" }}) and script as the current post.
 - Keep the rest of the post body and conclusion intact, but ensure seamless flow from the new hook.
 
 {% if additional_instructions %}

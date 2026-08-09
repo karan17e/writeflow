@@ -13,6 +13,7 @@ EDITORIAL REVIEW CHECKLIST (REVISE FOR):
 10. Overly formal language: Use a natural, conversational human voice.
 
 EDITORIAL CONSTRAINTS:
+- PRESERVE the target language ({{ language or "English" }}). If the draft is in Hindi (Devanagari script) or Hinglish (Roman Hindi + English), KEEP IT IN THAT EXACT LANGUAGE AND SCRIPT. Do NOT convert to standard English.
 - PRESERVE the original meaning.
 - PRESERVE all factual information.
 - NEVER INVENT new statistics or unprovided personal facts.

@@ -51,6 +51,7 @@ class PromptBuilder:
         topic: str,
         post_type: str = "Story",
         tone: str = "Conversational",
+        language: str = "English",
         target_audience: Optional[str] = "",
         personal_context: Optional[str] = "",
         key_points: Optional[str] = "",
@@ -74,6 +75,7 @@ class PromptBuilder:
             topic=topic,
             post_type=post_type,
             tone=tone,
+            language=language or "English",
             target_audience=target_audience or "",
             length_description=length_desc,
             personal_context=personal_context or "",
@@ -110,18 +112,28 @@ class PromptBuilder:
         return template.render(post_content=post_content)
 
     @staticmethod
-    def build_editor_pass_prompt(draft_content: str, writing_style: Optional[str] = "") -> str:
+    def build_editor_pass_prompt(
+        draft_content: str,
+        writing_style: Optional[str] = "",
+        language: str = "English"
+    ) -> str:
         template = PromptBuilder.load_template("editor_pass.txt")
-        return template.render(draft_content=draft_content, writing_style=writing_style or "")
+        return template.render(
+            draft_content=draft_content,
+            writing_style=writing_style or "",
+            language=language or "English"
+        )
 
     @staticmethod
     def build_refinement_prompt(
         action_filename: str,
         current_content: str,
-        additional_instructions: Optional[str] = ""
+        additional_instructions: Optional[str] = "",
+        language: str = "English"
     ) -> str:
         template = PromptBuilder.load_template(action_filename)
         return template.render(
             current_content=current_content,
-            additional_instructions=additional_instructions or ""
+            additional_instructions=additional_instructions or "",
+            language=language or "English"
         )

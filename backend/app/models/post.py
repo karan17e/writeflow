@@ -16,6 +16,7 @@ class Post(Base):
     topic: Mapped[str] = mapped_column(Text, nullable=False)
     post_type: Mapped[str] = mapped_column(String(50), nullable=False)
     tone: Mapped[str] = mapped_column(String(50), nullable=False)
+    language: Mapped[str] = mapped_column(String(20), default="English", nullable=False)
     personal_context: Mapped[str | None] = mapped_column(Text, nullable=True)
     key_points: Mapped[str | None] = mapped_column(Text, nullable=True)
     length: Mapped[str] = mapped_column(String(20), nullable=False)
