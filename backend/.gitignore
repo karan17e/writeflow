@@ -1,0 +1,12 @@
+# Backend environment & secrets
+.env
+.env.*
+!.env.example
+
+# Python cache & venv
+__pycache__/
+*.pyc
+.pytest_cache/
+venv/
+.venv/
+*.db

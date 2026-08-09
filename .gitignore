@@ -1,0 +1,41 @@
+# Environment & Secret Files (NEVER COMMIT)
+.env
+.env.local
+.env.development
+.env.production
+.env*.local
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+backend/*.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+ENV/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+*.local
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

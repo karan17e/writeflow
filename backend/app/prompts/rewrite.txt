@@ -1,0 +1,15 @@
+REWRITE INSTRUCTION:
+Completely rewrite the following LinkedIn post while preserving its core message, facts, and key ideas.
+Rephrase the sentences, change the structural pacing, and use fresh language so it reads as a brand new draft.
+
+{% if additional_instructions %}
+USER'S ADDITIONAL REWRITE INSTRUCTIONS:
+{{ additional_instructions }}
+{% endif %}
+
+CURRENT POST:
+---
+{{ current_content }}
+---
+
+Write ONLY the rewritten post text. Do not add explanations or meta commentary.

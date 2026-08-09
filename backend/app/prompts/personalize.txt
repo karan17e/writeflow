@@ -1,0 +1,20 @@
+PERSONALIZATION INSTRUCTION:
+Rewrite the following post to make it significantly more personal, authentic, and grounded in real human experience.
+
+REQUIREMENTS:
+1. Shift to first-person perspective ("I", "my team", "in my experience").
+2. Inject a genuine personal anecdote, real lesson, or self-reflective observation.
+3. Replace generic advice with concrete, real-world actions ("Here is what I did...").
+4. Make the voice warm, honest, and humble.
+
+{% if additional_instructions %}
+USER'S ADDITIONAL PERSONALIZATION DETAILS:
+{{ additional_instructions }}
+{% endif %}
+
+CURRENT POST:
+---
+{{ current_content }}
+---
+
+Write ONLY the personalized post text.

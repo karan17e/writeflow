@@ -1,0 +1,20 @@
+HOOK IMPROVEMENT INSTRUCTION:
+Rewrite ONLY the opening lines (the hook) of the following LinkedIn post to make it magnetic, scroll-stopping, and curiosity-driven.
+
+RULES FOR THE NEW HOOK:
+- Keep it under 2 lines.
+- Make it punchy, intriguing, or counter-intuitive.
+- DO NOT use clickbait, rhetorical questions, or generic phrases like "I'm excited to share...".
+- Keep the rest of the post body and conclusion intact, but ensure seamless flow from the new hook.
+
+{% if additional_instructions %}
+USER'S INSTRUCTIONS FOR THE HOOK:
+{{ additional_instructions }}
+{% endif %}
+
+CURRENT POST:
+---
+{{ current_content }}
+---
+
+Write ONLY the updated post text with the improved hook.

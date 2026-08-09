@@ -1,0 +1,36 @@
+You are an expert linguistic analyst. Analyze the provided writing sample(s) from a professional author to extract their unique writing style profile.
+
+INSTRUCTION:
+Examine the sample(s) and infer general writing characteristics across 8 dimensions:
+1. Formality (e.g. casual, casual-professional, formal, direct)
+2. Sentence length (e.g. short, medium, mixed, punchy)
+3. Vocabulary (e.g. simple, plain English, technical, sophisticated)
+4. Paragraph structure (e.g. single-line breaks, short paragraphs, bulleted)
+5. Emoji usage (e.g. none, low, moderate, high)
+6. Hook style (e.g. direct observation, bold claim, story opening)
+7. Use of questions (e.g. rare, moderate, closing question only)
+8. Storytelling preference (e.g. low, moderate, heavy narrative)
+
+CRITICAL RULES:
+- Analyze ONLY the stylistic mechanics and voice patterns.
+- Do NOT output or copy any content, facts, topic details, or specific sentences from the samples.
+
+SAMPLES TO ANALYZES:
+---
+{% for sample in samples %}
+SAMPLE {{ loop.index }}:
+{{ sample }}
+---
+{% endfor %}
+
+Return ONLY a valid JSON object matching this schema:
+{
+  "formality": "...",
+  "sentence_length": "...",
+  "vocabulary": "...",
+  "paragraph_structure": "...",
+  "emoji_usage": "...",
+  "hook_style": "...",
+  "use_of_questions": "...",
+  "storytelling": "..."
+}

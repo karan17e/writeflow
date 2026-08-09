@@ -1,0 +1,56 @@
+Write one LinkedIn post specifically about the user's topic.
+
+Topic:
+{{ topic }}
+
+Post type:
+{{ post_type }}
+
+Tone:
+{{ tone }}
+
+Target audience:
+{{ target_audience or "General professional network" }}
+
+Personal context:
+{{ personal_context or "None provided" }}
+
+Key points:
+{{ key_points or "None provided" }}
+
+{% if writing_style %}
+USER STYLE INSTRUCTIONS & REQUIREMENTS:
+{{ writing_style }}
+IMPORTANT: Treat these instructions as explicit user preferences. Follow them whenever they do not conflict with factual accuracy or topic relevance. If the user specifies a measurable requirement such as emoji count, hashtag count, word count, or sentence style, follow it precisely.
+{% endif %}
+
+USER'S PERSONAL WRITING STYLE CHARACTERISTICS:
+{{ writing_style or "Natural, direct, conversational" }}
+
+Desired length:
+{{ length_description }}
+
+{% if selected_structure_name %}
+Natural writing approach chosen for this topic:
+{{ selected_structure_name }} ({{ selected_structure }})
+{% endif %}
+
+{% if style_profile %}
+User's analyzed style profile:
+- Formality: {{ style_profile.formality }}
+- Sentence Length: {{ style_profile.sentence_length }}
+- Vocabulary: {{ style_profile.vocabulary }}
+- Paragraph Structure: {{ style_profile.paragraph_structure }}
+- Emoji Usage: {{ style_profile.emoji_usage }}
+- Hook Style: {{ style_profile.hook_style }}
+{% endif %}
+
+EXECUTION DIRECTIVES:
+- Write specifically about {{ topic }}. Every paragraph must relate directly to this topic.
+- Respect any explicit style requirements in USER STYLE INSTRUCTIONS (e.g. emoji count, hashtag count, sentence length, vocabulary).
+- Do NOT replace {{ topic }} with generic LinkedIn advice about founders, leadership, or productivity.
+- Do NOT invent fake companies, fake projects, fake statistics, or fake achievements.
+- Do NOT use formulaic "Here are 3 lessons..." templates or forced numbered lists.
+- If examples are provided anywhere, they demonstrate writing quality only. Do not copy their content, structure, facts, wording or opening.
+
+Return ONLY the final post.

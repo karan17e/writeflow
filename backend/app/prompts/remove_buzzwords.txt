@@ -1,0 +1,21 @@
+DE-BUZZWORD INSTRUCTION:
+Scan the following post and replace all corporate jargon, marketing buzzwords, and AI cliches with simple, natural, clear language.
+
+SPECIFIC TARGETS TO REMOVE & REPLACE:
+- leverage -> use
+- harness -> tap into / use
+- transformative / game-changer -> impactful / major shift
+- delve / landscape / tapestry -> explore / space / environment
+- elevate -> improve / boost
+- ecosystem / synergy -> working together / network
+- crucial / vital -> important / clear
+- in today's fast-paced world -> cut entirely
+
+Keep the exact same story and meaning, but make it sound like a real person talking over coffee.
+
+CURRENT POST:
+---
+{{ current_content }}
+---
+
+Write ONLY the cleaned post text.
