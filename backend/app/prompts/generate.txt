@@ -1,74 +1,29 @@
-Write one LinkedIn post specifically about the user's topic.
+Write a LinkedIn post specifically about the user's topic.
 
-Topic:
-{{ topic }}
-
-Post type:
-{{ post_type }}
-
-Tone:
-{{ tone }}
-
+Topic: {{ topic }}
+Post type: {{ post_type }}
+Tone: {{ tone }}
 Target Language:
 {{ language or "English" }}
 
 LANGUAGE GENERATION MANDATE:
 {% if language == "Hindi" %}
 - WRITE THE ENTIRE POST IN NATURAL HINDI USING DEVANAGARI SCRIPT (देवनागरी लिपि).
-- Do NOT use English alphabet except for standard technical/code terms (e.g. Python, SQL, API).
-- Express the topic naturally as a native Hindi speaker on LinkedIn would, not line-by-line machine translation.
 {% elif language == "Hinglish" %}
 - WRITE THE ENTIRE POST IN NATURAL HINGLISH (ROMAN HINDI + ENGLISH).
-- Use Roman script (Latin letters) to combine natural Hindi phrases with English tech/professional terms, the way Indian professionals and students talk and post on LinkedIn.
-- Example vibe: "3 months ki Python internship complete ho gayi! Pata hi nahi chala time kaise nikal gaya. Starting me asynchronous functions and API integration seekhna thoda confusing tha, par project build karte karte clear ho gaya..."
-- Do NOT translate English word-for-word into formal Hindi or plain English.
 {% else %}
 - WRITE THE ENTIRE POST IN NATURAL ENGLISH.
-- Fluent, natural LinkedIn English.
 {% endif %}
 
-Target audience:
-{{ target_audience or "General professional network" }}
+{% if target_audience %}Target audience: {{ target_audience }}{% endif %}
+{% if personal_context %}Personal context: {{ personal_context }}{% endif %}
+{% if key_points %}Key points: {{ key_points }}{% endif %}
+{% if writing_style %}USER'S PERSONAL WRITING STYLE CHARACTERISTICS: {{ writing_style }}{% endif %}
+Length: {{ length_description }}
 
-Personal context:
-{{ personal_context or "None provided" }}
+{% if selected_structure_name %}Approach: {{ selected_structure_name }} ({{ selected_structure }}){% endif %}
 
-Key points:
-{{ key_points or "None provided" }}
-
-{% if writing_style %}
-USER STYLE INSTRUCTIONS & REQUIREMENTS:
-{{ writing_style }}
-IMPORTANT: Treat these instructions as explicit user preferences. Follow them whenever they do not conflict with factual accuracy or topic relevance. If the user specifies a measurable requirement such as emoji count, hashtag count, word count, or sentence style, follow it precisely.
-{% endif %}
-
-USER'S PERSONAL WRITING STYLE CHARACTERISTICS:
-{{ writing_style or "Natural, direct, conversational" }}
-
-Desired length:
-{{ length_description }}
-
-{% if selected_structure_name %}
-Natural writing approach chosen for this topic:
-{{ selected_structure_name }} ({{ selected_structure }})
-{% endif %}
-
-{% if style_profile %}
-User's analyzed style profile:
-- Formality: {{ style_profile.formality }}
-- Sentence Length: {{ style_profile.sentence_length }}
-- Vocabulary: {{ style_profile.vocabulary }}
-- Paragraph Structure: {{ style_profile.paragraph_structure }}
-- Emoji Usage: {{ style_profile.emoji_usage }}
-- Hook Style: {{ style_profile.hook_style }}
-{% endif %}
-
-EXECUTION DIRECTIVES:
-- Write specifically about {{ topic }}. Every paragraph must relate directly to this topic.
-- Respect any explicit style requirements in USER STYLE INSTRUCTIONS (e.g. emoji count, hashtag count, sentence length, vocabulary).
-- Do NOT replace {{ topic }} with generic LinkedIn advice about founders, leadership, or productivity.
-- Do NOT invent fake companies, fake projects, fake statistics, or fake achievements.
-- Do NOT use formulaic "Here are 3 lessons..." templates or forced numbered lists.
-- If examples are provided anywhere, they demonstrate writing quality only. Do not copy their content, structure, facts, wording or opening.
-
-Return ONLY the final post.
+DIRECTIVES:
+- Write specifically about {{ topic }}. Do not invent fake facts or achievements.
+- Strictly adhere to any user style instructions (emoji/hashtag count, simple language).
+- Return ONLY the final post text.

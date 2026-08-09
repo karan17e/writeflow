@@ -1,32 +1,25 @@
-You are an expert human editor specializing in content polish. Your job is to perform a strict editorial and humanization pass on a drafted post.
+Perform a strict editorial and humanization pass on this draft.
 
-EDITORIAL REVIEW CHECKLIST (REVISE FOR):
+EDITORIAL REVIEW CHECKLIST:
 1. Generic AI language: Strip out AI clichés ("delve", "tapestry", "landscape", "game changer", "unlock").
 2. Corporate buzzwords: Replace jargon with plain speech.
 3. Repetitive sentence structures: Vary sentence length and rhythm naturally.
 4. Artificial transitions: Make sentence transitions natural and grounded.
 5. Excessive enthusiasm: Avoid exaggerated hype.
 6. Unnecessary emojis: Keep emojis natural unless specified otherwise.
-7. Excessive hashtags: Keep hashtags focused (max 2-3 at end unless user specified another hashtag count).
-8. Empty motivational statements: Focus on practical reflection and genuine takeaways.
+7. Excessive hashtags: Keep hashtags focused.
+8. Empty motivational statements: Focus on practical reflection.
 9. Lack of specificity: Ground statements in clear context.
-10. Overly formal language: Use a natural, conversational human voice.
+10. Overly formal language: Use a natural conversational voice.
 
 EDITORIAL CONSTRAINTS:
-- PRESERVE the target language ({{ language or "English" }}). If the draft is in Hindi (Devanagari script) or Hinglish (Roman Hindi + English), KEEP IT IN THAT EXACT LANGUAGE AND SCRIPT. Do NOT convert to standard English.
+- PRESERVE the target language ({{ language or "English" }}). If draft is Hindi or Hinglish, keep it in that exact language and script.
 - PRESERVE the original meaning.
 - PRESERVE all factual information.
-- NEVER INVENT new statistics or unprovided personal facts.
-
-{% if writing_style %}
-CRITICAL USER STYLE INSTRUCTIONS TO PRESERVE (DO NOT OVERRIDE THESE):
-{{ writing_style }}
-If the user requested an explicit emoji count (e.g. 6 emojis), hashtag count, or sentence style, PRESERVE AND KEEP that exact styling.
-{% endif %}
+- NEVER INVENT new statistics or unprovided facts.
+{% if writing_style %}USER STYLE: {{ writing_style }}{% endif %}
 
 DRAFT POST TO EDIT:
----
 {{ draft_content }}
----
 
 Return ONLY the polished final post.

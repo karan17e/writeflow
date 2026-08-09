@@ -22,13 +22,19 @@ async def generate_post(req: GenerateRequest):
         logger.error(f"Configuration or validation error in generate_post: {str(ve)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unable to generate your post. Please check the AI provider configuration or API key. ({str(ve)})"
+            detail=f"Unable to generate your post. ({str(ve)})"
         )
     except Exception as e:
+        err_msg = str(e)
         logger.exception("Failed to generate post")
+        if "429" in err_msg or "rate_limit_exceeded" in err_msg or "Rate limit" in err_msg:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="AI generation is temporarily rate limited. Please try again after the provider's limit resets."
+            )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Unable to generate your post. AI provider error: {str(e)}"
+            detail="AI generation service is temporarily unavailable. Please try again in a few moments."
         )
 
 

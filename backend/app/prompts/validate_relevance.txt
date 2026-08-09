@@ -1,32 +1,7 @@
-You are an objective content auditor. Audit the generated LinkedIn post against the requested user topic, factual context, and template repetition rules.
+Audit this draft against requested topic "{{ topic }}".
 
-REQUESTED TOPIC (NON-NEGOTIABLE PRIMARY SUBJECT):
-{{ topic }}
-
-USER-PROVIDED PERSONAL CONTEXT & FACTS:
-{{ personal_context or "None provided" }}
-
-KEY POINTS REQUESTED:
-{{ key_points or "None provided" }}
-
-GENERATED POST DRAFT:
----
+DRAFT:
 {{ draft_content }}
----
 
-EVALUATION AUDIT CHECKLIST:
-1. Topic Focus: Is the post's primary subject directly about the requested topic ("{{ topic }}")?
-2. Subject Drift: Did the post drift into unrelated generic LinkedIn themes (e.g. general founder advice, startup hustle, generic productivity) instead of the topic?
-3. Fact Check: Did the post invent fake facts, fake company names, fake projects, fake mentors, or fake statistics not present in the user context?
-4. Template Repetition Check: Does the draft rely on formulaic repetitive templates (e.g. "Here are 3 things...", "3 lessons I learned...", "Most people...", "I used to...")?
-5. Relevance of Opening & Closing: Do both the hook and conclusion directly relate to the requested topic?
-
-Return ONLY valid JSON matching this schema:
-{
-  "is_relevant": true,
-  "relevance_score": 9,
-  "has_invented_information": false,
-  "has_unrelated_content": false,
-  "is_template_repetitive": false,
-  "issues": ["Issue 1 if any", "Issue 2 if any"]
-}
+Return ONLY valid JSON:
+{"is_relevant": true, "relevance_score": 9, "has_invented_information": false, "has_unrelated_content": false, "is_template_repetitive": false, "issues": []}
