@@ -10,11 +10,23 @@ HIERARCHY OF CONTROL:
 5. TONE & AUDIENCE (Frames perspective & phrasing)
 6. STYLE & ENGAGEMENT
 
-LANGUAGE & HUMANIZED WRITING MANDATE:
-- The selected language MUST control the AI-generated post output naturally.
-- English: Natural, fluent English suitable for LinkedIn.
-- Hindi: Written entirely in Devanagari script (देवनागरी लिपि), expressing ideas naturally.
-- Hinglish: Written naturally in Roman Hindi + English as Indian professionals communicate online. Do NOT write literal machine-translated English.
+LANGUAGE MANDATE (CRITICAL - HIGH PRIORITY):
+{% if language == "Hindi" %}
+- TARGET LANGUAGE: HINDI.
+- WRITE THE ENTIRE POST IN NATURAL HINDI USING DEVANAGARI SCRIPT (देवनागरी लिपि).
+- Do NOT use English alphabet except for standard technical/code terms (e.g. Python, SQL, API).
+- Express the topic naturally as a native Hindi speaker on LinkedIn would, not line-by-line machine translation.
+{% elif language == "Hinglish" %}
+- TARGET LANGUAGE: HINGLISH.
+- WRITE THE ENTIRE POST IN NATURAL HINGLISH (ROMAN HINDI + ENGLISH).
+- Use Roman script (Latin letters) to combine natural Hindi phrases with English tech/professional terms, the way Indian professionals and students talk and post on LinkedIn.
+- Example vibe: "Aaj 3 months ki Python internship complete ho gayi! Pata hi nahi chala time kaise nikal gaya. Starting me asynchronous functions seekhna thoda confusing tha, par project build karte karte clear ho gaya..."
+- Do NOT translate English word-for-word into formal Hindi or plain English.
+{% else %}
+- TARGET LANGUAGE: ENGLISH.
+- WRITE THE ENTIRE POST IN NATURAL ENGLISH.
+- Fluent, natural LinkedIn English.
+{% endif %}
 - Avoid generic, repetitive openings such as "I want to share...", "I am excited to...", "Today I want to...", "I recently learned...".
 - Select a natural structure based on the topic.
 

@@ -236,10 +236,12 @@ class PostService:
     async def generate_post(req: GenerateRequest) -> PostResponse:
         logger.info(f"==================================================")
         logger.info(f"TOPIC RECEIVED: '{req.topic}'")
+        logger.info(f"Selected language: {req.language}")
         logger.info(f"POST TYPE: '{req.post_type}', TONE: '{req.tone}', LANGUAGE: '{req.language}', AUDIENCE: '{req.target_audience}'")
         logger.info(f"WRITING STYLE INSTRUCTION: '{req.writing_style}'")
+        logger.info(f"Final language instruction passed to AI: TARGET LANGUAGE = {req.language}")
 
-        system_prompt = PromptBuilder.get_system_prompt()
+        system_prompt = PromptBuilder.get_system_prompt(language=req.language)
         provider = get_ai_provider(req.provider)
 
         # 1. Parse Explicit User Style Requirements
@@ -412,7 +414,7 @@ class PostService:
     async def refine_post(req: RefineRequest, action_name: str, template_filename: str, temperature: float = 0.7) -> PostResponse:
         logger.info(f"Refining post with action='{action_name}', language='{req.language or 'English'}'")
 
-        system_prompt = PromptBuilder.get_system_prompt()
+        system_prompt = PromptBuilder.get_system_prompt(language=req.language or "English")
         user_prompt = PromptBuilder.build_refinement_prompt(
             action_filename=template_filename,
             current_content=req.post,

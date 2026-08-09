@@ -28,9 +28,9 @@ class PromptBuilder:
             return Template(f.read())
 
     @staticmethod
-    def get_system_prompt() -> str:
+    def get_system_prompt(language: str = "English") -> str:
         template = PromptBuilder.load_template("system.txt")
-        return template.render()
+        return template.render(language=language or "English")
 
     @staticmethod
     def select_structure(topic: str, post_type: str = "Story") -> Tuple[str, str]:

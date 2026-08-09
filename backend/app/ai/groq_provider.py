@@ -35,30 +35,42 @@ class GroqProvider(BaseAIProvider):
         model: str | None = None
     ) -> AIResponse:
         client = self._get_client()
-        used_model = model or self.default_model
+        initial_model = model or self.default_model
+        candidate_models = [initial_model]
+        
+        # Fallback options in case rate limits (429) occur on the primary model
+        fallbacks = ["llama-3.1-8b-instant", "qwen-2.5-32b", "deepseek-r1-distill-llama-70b"]
+        for m in fallbacks:
+            if m not in candidate_models:
+                candidate_models.append(m)
 
-        logger.info(f"GroqProvider calling Groq API: model={used_model}, temp={temperature}")
-        logger.info(f"PROMPT SENT TO AI:\n{user_prompt[:250]}...")
+        last_error = None
+        for current_model in candidate_models:
+            logger.info(f"GroqProvider calling Groq API: model={current_model}, temp={temperature}")
+            logger.info(f"PROMPT SENT TO AI:\n{user_prompt[:250]}...")
 
-        try:
-            response = await client.chat.completions.create(
-                model=used_model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                temperature=temperature,
-                max_tokens=max_tokens
-            )
+            try:
+                response = await client.chat.completions.create(
+                    model=current_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=temperature,
+                    max_tokens=max_tokens
+                )
 
-            content = response.choices[0].message.content.strip()
-            logger.info(f"AI RESPONSE RECEIVED (length={len(content)} chars):\n{content[:150]}...")
+                content = response.choices[0].message.content.strip()
+                logger.info(f"AI RESPONSE RECEIVED with model={current_model} (length={len(content)} chars):\n{content[:150]}...")
 
-            return AIResponse(
-                content=content,
-                provider=self.provider_name,
-                model=used_model
-            )
-        except Exception as e:
-            logger.error(f"Groq API call failed: {str(e)}")
-            raise RuntimeError(f"Groq AI provider error: {str(e)}")
+                return AIResponse(
+                    content=content,
+                    provider=self.provider_name,
+                    model=current_model
+                )
+            except Exception as e:
+                logger.warning(f"Groq API call with model '{current_model}' failed: {str(e)}")
+                last_error = e
+
+        logger.error(f"All Groq fallback models failed. Last error: {str(last_error)}")
+        raise RuntimeError(f"Groq AI provider error: {str(last_error)}")
