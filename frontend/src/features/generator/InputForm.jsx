@@ -229,12 +229,12 @@ export const InputForm = ({ onGenerate, isLoading }) => {
         </div>
 
         <p className="text-[11px] text-slate-500">
-          Tell the AI how you want your post written. Example: Use 3 emojis, short sentences, simple English, and no hashtags.
+          Tell the AI how you want your post written. Example: Use 3 emojis, short sentences, simple language, and no hashtags.
         </p>
 
         <Textarea
           id="writing_style"
-          placeholder="Use 3 emojis, short sentences, simple English, and no hashtags."
+          placeholder="Use 3 emojis, short sentences, simple language, and no hashtags."
           rows={2}
           value={formData.writing_style}
           onChange={(e) => handleChange('writing_style', e.target.value)}

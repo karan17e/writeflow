@@ -55,7 +55,8 @@ class PostService:
         logger.info("Executing targeted editing pass to satisfy user style requirements...")
         
         system_prompt = (
-            f"You are a precise content editor. The target language is {language}. "
+            f"You are a precise content editor. The target language is {language}.\n"
+            f"STRICT LANGUAGE REQUIREMENT: The final output post MUST be written in {language}. Do NOT translate or change to English.\n"
             "The user has requested exact formatting/emoji requirements. "
             "You MUST insert or adjust the exact requested number of emojis or hashtags naturally into the text. "
             f"Do NOT change the target language ({language}), underlying topic, facts, or narrative."
@@ -92,7 +93,7 @@ class PostService:
         user_prompt = (
             f"CURRENT POST:\n{post_content}\n\n"
             f"REQUIRED EDITS:\n- {instruction_text}\n\n"
-            f"CRITICAL: Maintain the post strictly in {language}. Do NOT change the topic or facts. Ensure the output post contains the EXACT requested number of emojis/hashtags.\n"
+            f"CRITICAL: Maintain the post strictly in {language}. Do NOT change the target language ({language}), topic, or facts. Ensure the output post contains the EXACT requested number of emojis/hashtags.\n"
             f"Return ONLY the final updated post text."
         )
 
@@ -236,7 +237,7 @@ class PostService:
     async def generate_post(req: GenerateRequest) -> PostResponse:
         logger.info(f"==================================================")
         logger.info(f"TOPIC RECEIVED: '{req.topic}'")
-        logger.info(f"Selected language: {req.language}")
+        logger.info(f"[WriteFlow] Selected language: {req.language}")
         logger.info(f"POST TYPE: '{req.post_type}', TONE: '{req.tone}', LANGUAGE: '{req.language}', AUDIENCE: '{req.target_audience}'")
         logger.info(f"WRITING STYLE INSTRUCTION: '{req.writing_style}'")
         logger.info(f"Final language instruction passed to AI: TARGET LANGUAGE = {req.language}")

@@ -35,11 +35,11 @@ class PromptBuilder:
     @staticmethod
     def select_structure(topic: str, post_type: str = "Story") -> Tuple[str, str]:
         topic_lower = topic.lower()
-        if "project" in topic_lower or "built" in topic_lower or "building" in topic_lower or "arduino" in topic_lower:
+        if "project" in topic_lower or "built" in topic_lower or "building" in topic_lower or "arduino" in topic_lower or "bnaya" in topic_lower or "banaya" in topic_lower:
             return ("Project explanation", "a clear explanation of what was built, why, and what was learned")
-        elif "learn" in topic_lower or "c++" in topic_lower or "skill" in topic_lower or "first year" in topic_lower:
+        elif "learn" in topic_lower or "c++" in topic_lower or "skill" in topic_lower or "first year" in topic_lower or "seekha" in topic_lower:
             return ("Reflection & Learning", "a thoughtful reflection on the learning process and personal takeaways")
-        elif "internship" in topic_lower or "career" in topic_lower or "job" in topic_lower:
+        elif "internship" in topic_lower or "intern" in topic_lower or "career" in topic_lower or "job" in topic_lower:
             return ("Experience narrative", "a personal experience update focusing on practical growth and reflection")
         elif "hackathon" in topic_lower or "failed" in topic_lower or "failure" in topic_lower:
             return ("Problem & Realization", "a turning-point story moving from an obstacle to clarity")

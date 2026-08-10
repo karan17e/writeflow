@@ -15,7 +15,7 @@ router = APIRouter(tags=["WriteFlow Posts"])
 
 @router.post("/generate", response_model=PostResponse, status_code=status.HTTP_200_OK)
 async def generate_post(req: GenerateRequest):
-    logger.info(f"BACKEND REQUEST RECEIVED: topic='{req.topic}', Selected language: {req.language}, provider='{req.provider or 'default'}'")
+    logger.info(f"BACKEND REQUEST RECEIVED: topic='{req.topic}', [WriteFlow] Selected language: {req.language}, provider='{req.provider or 'default'}'")
     try:
         return await PostService.generate_post(req)
     except ValueError as ve:

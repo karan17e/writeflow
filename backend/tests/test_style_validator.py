@@ -68,7 +68,7 @@ async def test_style_requirement_test_3_three_emojis():
 async def test_style_requirement_test_4_no_hashtags():
     req = GenerateRequest(
         topic="Learning C++",
-        writing_style="Use simple English and no hashtags",
+        writing_style="Use simple language and no hashtags",
         provider="mock"
     )
     response = await PostService.generate_post(req)

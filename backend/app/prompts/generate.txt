@@ -1,18 +1,42 @@
-Write a LinkedIn post specifically about the user's topic.
+Write a natural LinkedIn post based on the core meaning of the user's raw topic.
 
-Topic: {{ topic }}
+Raw User Topic / Idea:
+{{ topic }}
+
 Post type: {{ post_type }}
 Tone: {{ tone }}
-Target Language:
-{{ language or "English" }}
 
-LANGUAGE GENERATION MANDATE:
 {% if language == "Hindi" %}
-- WRITE THE ENTIRE POST IN NATURAL HINDI USING DEVANAGARI SCRIPT (देवनागरी लिपि).
+LANGUAGE:
+Hindi
+
+STRICT LANGUAGE REQUIREMENT:
+Write the entire LinkedIn post in natural Hindi using Devanagari script.
+Do not write the post in English.
+Do not translate an English draft after generation.
+Generate the content directly in Hindi.
+Technical/code terms (e.g. Python, VS Code, internship, coding) may remain in English when natural.
 {% elif language == "Hinglish" %}
-- WRITE THE ENTIRE POST IN NATURAL HINGLISH (ROMAN HINDI + ENGLISH).
+LANGUAGE:
+Hinglish
+
+STRICT LANGUAGE REQUIREMENT:
+Write the entire LinkedIn post in natural Indian Hinglish using Roman script.
+
+Use natural Hindi words written in English/Roman characters mixed with English words where appropriate.
+
+Do NOT use Devanagari.
+
+Do NOT generate an English post and translate it afterward.
+
+Do NOT make every sentence English with a few Hindi words added randomly.
+
+The result should sound like a real Indian student/professional naturally writing on LinkedIn.
 {% else %}
-- WRITE THE ENTIRE POST IN NATURAL ENGLISH.
+LANGUAGE:
+English
+
+Write naturally in English.
 {% endif %}
 
 {% if target_audience %}Target audience: {{ target_audience }}{% endif %}
@@ -24,6 +48,9 @@ Length: {{ length_description }}
 {% if selected_structure_name %}Approach: {{ selected_structure_name }} ({{ selected_structure }}){% endif %}
 
 DIRECTIVES:
-- Write specifically about {{ topic }}. Do not invent fake facts or achievements.
-- Strictly adhere to any user style instructions (emoji/hashtag count, simple language).
+- Understand the core intent of the raw topic (mentally normalizing any typos, spelling errors, or informal phrasing).
+- Write a completely new, humanized LinkedIn post based on the intended meaning.
+- DO NOT quote or copy the raw topic text/phrase into the post.
+- DO NOT invent specific unprovided tech stacks, frameworks, team metrics, or fake stats.
+- Strictly adhere to the STRICT LANGUAGE REQUIREMENT above.
 - Return ONLY the final post text.

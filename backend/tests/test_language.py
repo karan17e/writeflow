@@ -38,19 +38,19 @@ def test_prompt_builder_language_rendering():
         topic="3 months Python internship",
         language="English"
     )
-    assert "Target Language:\nEnglish" in prompt_en
-    assert "NATURAL ENGLISH" in prompt_en
+    assert "LANGUAGE:\nEnglish" in prompt_en
+    assert "Write naturally in English." in prompt_en
 
     prompt_hi = PromptBuilder.build_generation_prompt(
         topic="3 months Python internship",
         language="Hindi"
     )
-    assert "Target Language:\nHindi" in prompt_hi
-    assert "DEVANAGARI SCRIPT" in prompt_hi
+    assert "LANGUAGE:\nHindi" in prompt_hi
+    assert "Devanagari script" in prompt_hi
 
     prompt_hing = PromptBuilder.build_generation_prompt(
         topic="3 months Python internship",
         language="Hinglish"
     )
-    assert "Target Language:\nHinglish" in prompt_hing
-    assert "ROMAN HINDI + ENGLISH" in prompt_hing
+    assert "LANGUAGE:\nHinglish" in prompt_hing
+    assert "natural Indian Hinglish using Roman script" in prompt_hing
