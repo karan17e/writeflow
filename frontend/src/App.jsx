@@ -15,6 +15,12 @@ const queryClient = new QueryClient({
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('generator');
+  const [restoredItem, setRestoredItem] = useState(null);
+
+  const handleRestorePost = (item) => {
+    setRestoredItem(item);
+    setActiveTab('generator');
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -62,7 +68,17 @@ export default function App() {
 
         {/* Main Content Area */}
         <main className="flex-1">
-          {activeTab === 'generator' ? <GeneratorPage /> : <HistoryPage />}
+          {activeTab === 'generator' ? (
+            <GeneratorPage
+              restoredItem={restoredItem}
+              onClearRestoredItem={() => setRestoredItem(null)}
+            />
+          ) : (
+            <HistoryPage
+              onRestorePost={handleRestorePost}
+              onNavigateToGenerator={() => setActiveTab('generator')}
+            />
+          )}
         </main>
 
         {/* Footer */}

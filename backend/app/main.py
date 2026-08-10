@@ -7,9 +7,17 @@ from app.configuration import settings, logger
 from app.routes import post_router, health_router
 
 
+from app.database import init_db
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.PROJECT_NAME} in environment={settings.ENVIRONMENT}")
+    try:
+        await init_db()
+        logger.info("Database initialized successfully.")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {e}")
     yield
     logger.info(f"Shutting down {settings.PROJECT_NAME}")
 

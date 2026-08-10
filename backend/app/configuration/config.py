@@ -34,9 +34,18 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins(self) -> List[str]:
-        if not self.ALLOWED_ORIGINS or self.ALLOWED_ORIGINS.strip() == "*":
-            return ["*"]
-        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
+        origins = [
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:3000",
+        ]
+        if self.ALLOWED_ORIGINS and self.ALLOWED_ORIGINS.strip() != "*":
+            custom_origins = [o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
+            for co in custom_origins:
+                if co not in origins:
+                    origins.append(co)
+        return origins
 
 
 settings = Settings()

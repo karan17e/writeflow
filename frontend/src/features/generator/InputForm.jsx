@@ -8,7 +8,7 @@ import { Sparkles, PenTool, Check, Trash2, BookOpen, Plus, X, Lightbulb } from '
 const LOCAL_STORAGE_STYLE_KEY = 'postcraft_writing_style';
 const LOCAL_STORAGE_SAMPLES_KEY = 'postcraft_writing_samples';
 
-export const InputForm = ({ onGenerate, isLoading }) => {
+export const InputForm = ({ onGenerate, isLoading, restoredFormData }) => {
   const [formData, setFormData] = useState({
     topic: '',
     post_type: 'Story',
@@ -47,6 +47,24 @@ export const InputForm = ({ onGenerate, isLoading }) => {
       console.warn('Could not load settings from localStorage', e);
     }
   }, []);
+
+  // Update form fields when a previous history post is restored
+  useEffect(() => {
+    if (restoredFormData) {
+      setFormData({
+        topic: restoredFormData.topic || '',
+        post_type: restoredFormData.post_type || 'Story',
+        tone: restoredFormData.tone || 'Conversational',
+        language: restoredFormData.language || 'English',
+        target_audience: restoredFormData.target_audience || '',
+        personal_context: restoredFormData.personal_context || '',
+        key_points: restoredFormData.key_points || '',
+        length: restoredFormData.length || 'Medium',
+        writing_style: restoredFormData.writing_style || '',
+      });
+      setError('');
+    }
+  }, [restoredFormData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

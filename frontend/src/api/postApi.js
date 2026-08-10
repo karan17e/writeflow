@@ -13,7 +13,7 @@ const client = axios.create({
 
 export const postApi = {
   generatePost: async (payload) => {
-    console.log('2. Request sent to backend (/generate):', payload);
+    console.log('Request sent to backend (/generate):', payload);
     const { data } = await client.post('/generate', payload);
     return data;
   },
@@ -50,6 +50,38 @@ export const postApi = {
 
   checkHealth: async () => {
     const { data } = await client.get('/health');
+    return data;
+  },
+
+  // Persistent History APIs
+  listHistory: async (params = {}) => {
+    const { data } = await client.get('/history', { params });
+    return data;
+  },
+
+  getHistoryItem: async (id) => {
+    const { data } = await client.get(`/history/${id}`);
+    return data;
+  },
+
+  deleteHistoryItem: async (id) => {
+    const { data } = await client.delete(`/history/${id}`);
+    return data;
+  },
+
+  clearAllHistory: async () => {
+    const { data } = await client.delete('/history');
+    return data;
+  },
+
+  // Backward compatibility aliases
+  listPosts: async (skip = 0, limit = 50) => {
+    const { data } = await client.get('/history', { params: { skip, limit } });
+    return data;
+  },
+
+  deletePost: async (id) => {
+    const { data } = await client.delete(`/history/${id}`);
     return data;
   }
 };
