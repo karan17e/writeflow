@@ -39,11 +39,14 @@ class Settings(BaseSettings):
             "http://localhost:3000",
             "http://127.0.0.1:5173",
             "http://127.0.0.1:3000",
+            "https://writeflow-git-main-karan-de-bande.vercel.app",
+            "https://writeflow-karan-de-bande.vercel.app",
+            "https://writeflow.vercel.app",
         ]
-        if self.ALLOWED_ORIGINS and self.ALLOWED_ORIGINS.strip() != "*":
-            custom_origins = [o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
+        if self.ALLOWED_ORIGINS:
+            custom_origins = [o.strip().rstrip("/") for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
             for co in custom_origins:
-                if co not in origins:
+                if co != "*" and co not in origins:
                     origins.append(co)
         return origins
 
