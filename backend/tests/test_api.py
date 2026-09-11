@@ -21,6 +21,29 @@ async def test_health_endpoint():
 
 
 @pytest.mark.asyncio
+async def test_root_health_endpoint():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        get_res = await ac.get("/health")
+        assert get_res.status_code == 200
+        assert get_res.json() == {"status": "ok"}
+
+        head_res = await ac.head("/health")
+        assert head_res.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_root_endpoint():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        get_res = await ac.get("/")
+        assert get_res.status_code == 200
+        assert "message" in get_res.json()
+
+        head_res = await ac.head("/")
+        assert head_res.status_code == 200
+
+
+
+@pytest.mark.asyncio
 async def test_generate_and_refine_flow():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         gen_payload = {

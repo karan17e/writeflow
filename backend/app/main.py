@@ -53,12 +53,18 @@ app.include_router(health_router, prefix="/api")
 app.include_router(post_router, prefix="/api")
 
 
-@app.get("/")
+@app.api_route("/health", methods=["GET", "HEAD"])
+async def health_check():
+    return {"status": "ok"}
+
+
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     return {
         "message": "WriteFlow API is running",
         "docs": "/docs"
     }
+
 
 
 if __name__ == "__main__":
