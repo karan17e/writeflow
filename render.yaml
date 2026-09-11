@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: writeflow-backend
+    runtime: python
+    region: singapore
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: false
+      - key: LLM_PROVIDER
+        value: groq
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:///./linkedin_posts.db
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: "https://writeflow-git-main-karan-de-bande.vercel.app,https://writeflow-karan-de-bande.vercel.app,https://writeflow.vercel.app"
