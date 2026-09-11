@@ -134,16 +134,6 @@ export const HistoryPage = ({ onRestorePost, onNavigateToGenerator }) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleExportExcel}
-              isLoading={isExporting}
-              icon={Download}
-              className="text-emerald-700 border-emerald-300 hover:bg-emerald-50"
-            >
-              Export Excel
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
               onClick={() => setShowClearAllModal(true)}
               icon={Trash2}
               className="text-rose-600 border-rose-200 hover:bg-rose-50"
