@@ -39,7 +39,7 @@ class GroqProvider(BaseAIProvider):
         candidate_models = [initial_model]
         
         # Fallback options in case rate limits (429) occur on the primary model
-        fallbacks = ["llama-3.1-8b-instant", "qwen-2.5-32b", "deepseek-r1-distill-llama-70b"]
+        fallbacks = ["llama-3.1-8b-instant", "qwen-2.5-32b", "openai/gpt-oss-120b"]
         for m in fallbacks:
             if m not in candidate_models:
                 candidate_models.append(m)

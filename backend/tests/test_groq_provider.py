@@ -40,3 +40,34 @@ async def test_mock_provider_fallback_safe():
     assert "api_key" not in metadata
     assert "groq_api_key" not in metadata
     assert "secret" not in metadata
+
+
+@pytest.mark.asyncio
+async def test_groq_fallback_models_include_gpt_oss_120b(monkeypatch):
+    # Mock AsyncGroq to capture models attempted during fallback execution
+    models_attempted = []
+
+    class MockCompletions:
+        async def create(self, model, **kwargs):
+            models_attempted.append(model)
+            # Fail all models to test full fallback sequence
+            raise Exception(f"Simulated error for model {model}")
+
+    class MockChat:
+        def __init__(self):
+            self.completions = MockCompletions()
+
+    class MockAsyncGroq:
+        def __init__(self, api_key=None):
+            self.chat = MockChat()
+
+    monkeypatch.setattr("groq.AsyncGroq", MockAsyncGroq)
+
+    provider = GroqProvider(api_key="mock_key")
+    with pytest.raises(RuntimeError) as exc_info:
+        await provider.generate(system_prompt="Test", user_prompt="Test prompt")
+
+    assert "openai/gpt-oss-120b" in models_attempted
+    assert "deepseek-r1-distill-llama-70b" not in models_attempted
+    assert models_attempted[-1] == "openai/gpt-oss-120b"
+
