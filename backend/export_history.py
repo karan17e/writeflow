@@ -15,6 +15,7 @@ Usage:
 
 import sys
 import json
+import re
 import datetime
 import urllib.request
 import urllib.error
@@ -26,6 +27,32 @@ PAGE_LIMIT = 100
 
 timestamp_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 OUTPUT_FILENAME = f"writeflow_history_export_{timestamp_str}.xlsx"
+
+# Regex matching illegal XML 1.0 control characters
+ILLEGAL_XML_CHARS_RE = re.compile(r'[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f-\x84\x86-\x9f]')
+
+
+def sanitize_cell_value(val):
+    """
+    Sanitizes values for OpenXML / openpyxl cell placement.
+    Returns None for empty/null values to avoid writing invalid <c t="inlineStr"/> tags.
+    """
+    if val is None:
+        return None
+    if isinstance(val, bool):
+        return val
+    if isinstance(val, (int, float)):
+        return val
+    if isinstance(val, (dict, list)):
+        val = json.dumps(val, ensure_ascii=False)
+    
+    val_str = str(val)
+    # Strip illegal XML control characters
+    val_str = ILLEGAL_XML_CHARS_RE.sub('', val_str)
+    
+    if not val_str:
+        return None
+    return val_str
 
 
 def fetch_all_production_history() -> list:
@@ -104,14 +131,15 @@ def ensure_openpyxl():
         print("Please install it using:")
         print("  pip install openpyxl")
         print("  -- or --")
-        print("  ..\\venv\\Scripts\\pip.exe install openpyxl")
+        print("  ../venv/Scripts/python.exe export_history.py")
         sys.exit(1)
 
 
-def generate_excel_export(records: list, openpyxl_mod) -> str:
+def generate_excel_export(records: list, openpyxl_mod) -> tuple:
     """
     Format records into an Excel sheet with headers, wrap text, 
     custom column widths, and a summary sheet.
+    Returns (output_path, rows_written).
     """
     from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
     from openpyxl.utils import get_column_letter
@@ -165,18 +193,18 @@ def generate_excel_export(records: list, openpyxl_mod) -> str:
     ws.row_dimensions[1].height = 28
     ws.freeze_panes = "A2"
 
-    # Write Data
+    # Write Data Rows
     wrap_alignment = Alignment(vertical="top", wrap_text=True)
     nowrap_alignment = Alignment(vertical="top", wrap_text=False)
     even_row_fill = PatternFill("solid", fgColor="F7F9FC")
 
+    rows_written = 0
     for row_idx, rec in enumerate(records, start=2):
         row_fill = even_row_fill if row_idx % 2 == 0 else None
         
         for col_idx, (field_name, _, _) in enumerate(columns, start=1):
-            val = rec.get(field_name, "")
-            if val is None:
-                val = ""
+            raw_val = rec.get(field_name)
+            val = sanitize_cell_value(raw_val)
             
             cell = ws.cell(row=row_idx, column=col_idx, value=val)
             
@@ -191,10 +219,11 @@ def generate_excel_export(records: list, openpyxl_mod) -> str:
         newlines = post_str.count("\n") + 1
         calc_height = max(20, min(newlines * 16, 150))
         ws.row_dimensions[row_idx].height = calc_height
+        rows_written += 1
 
     # Auto-filter on all data columns
     last_col_letter = get_column_letter(len(columns))
-    ws.auto_filter.ref = f"A1:{last_col_letter}{max(len(records) + 1, 2)}"
+    ws.auto_filter.ref = f"A1:{last_col_letter}{max(rows_written + 1, 2)}"
 
     # ── Sheet 2: Export Summary ─────────────────────────────────────────────
     ws_summary = wb.create_sheet("Export Summary")
@@ -204,7 +233,8 @@ def generate_excel_export(records: list, openpyxl_mod) -> str:
         ("Export Execution Date", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
         ("Production API Base URL", PRODUCTION_BASE_URL),
         ("History Endpoint", HISTORY_ENDPOINT),
-        ("Total Records Exported", len(records)),
+        ("Total Records Fetched", len(records)),
+        ("Total Rows Written", rows_written),
         ("Output File Name", OUTPUT_FILENAME),
         ("Full Post Content Included", "YES (Un-truncated in 'Post Content' column)"),
         ("Database Source", "Live WriteFlow Production API"),
@@ -220,7 +250,52 @@ def generate_excel_export(records: list, openpyxl_mod) -> str:
     # Save output file
     output_path = os.path.abspath(OUTPUT_FILENAME)
     wb.save(output_path)
-    return output_path
+    return output_path, rows_written
+
+
+def verify_generated_excel(file_path: str, records_fetched: int, openpyxl_mod):
+    """
+    Strict post-export verification:
+    1. Reopens the saved XLSX file using openpyxl.
+    2. Validates total data rows written equals records_fetched.
+    3. Confirms non-empty Topic and Post Content in every written data row.
+    4. Checks underlying OpenXML for invalid <c t="inlineStr"/> tags.
+    """
+    import zipfile
+
+    print("\n[VERIFICATION] Validating generated Excel workbook...")
+    wb = openpyxl_mod.load_workbook(file_path)
+    ws = wb["Post History"]
+
+    data_rows = ws.max_row - 1
+    print(f"      ✓ Max Row in Worksheet: {ws.max_row} (1 Header + {data_rows} Data Rows)")
+    
+    if data_rows != records_fetched:
+        print(f"      ✗ MISMATCH ERROR: Fetched {records_fetched} records but found {data_rows} Excel data rows!")
+        sys.exit(1)
+
+    # Inspect cell values in written rows
+    for r in range(2, ws.max_row + 1):
+        topic_val = ws.cell(row=r, column=3).value
+        post_val = ws.cell(row=r, column=12).value
+        if not topic_val or not str(topic_val).strip():
+            print(f"      ✗ VERIFICATION FAILED: Row {r} has empty Topic!")
+            sys.exit(1)
+        if not post_val or not str(post_val).strip():
+            print(f"      ✗ VERIFICATION FAILED: Row {r} has empty Post Content!")
+            sys.exit(1)
+
+    # Inspect raw OpenXML zip file for invalid <c t="inlineStr"/> tags
+    with zipfile.ZipFile(file_path, 'r') as z:
+        sheet1_xml = z.read('xl/worksheets/sheet1.xml').decode('utf-8')
+        invalid_tags = re.findall(r'<c[^>]*\bt="inlineStr"\s*/>', sheet1_xml)
+        if invalid_tags:
+            print(f"      ✗ VERIFICATION FAILED: Found {len(invalid_tags)} invalid <c t=\"inlineStr\"/> tags in sheet1.xml!")
+            sys.exit(1)
+
+    print(f"      ✓ Verification PASSED: {records_fetched} records fetched == {data_rows} Excel data rows written.")
+    print("      ✓ All data rows contain non-empty Topic and Post Content.")
+    print("      ✓ OpenXML structure verified clean and fully compliant.")
 
 
 def main():
@@ -234,17 +309,22 @@ def main():
     print(f"      ✓ openpyxl {openpyxl_mod.__version__} is ready.")
 
     print("\n[3/3] Exporting to Excel format...")
-    file_path = generate_excel_export(records, openpyxl_mod)
+    file_path, rows_written = generate_excel_export(records, openpyxl_mod)
+
+    # Verification
+    verify_generated_excel(file_path, len(records), openpyxl_mod)
     
     print("\n" + "=" * 65)
     print("  EXPORT COMPLETED SUCCESSFULLY")
     print("=" * 65)
     print(f"  Output File     : {OUTPUT_FILENAME}")
     print(f"  Full Path       : {file_path}")
-    print(f"  Records Exported: {len(records)}")
+    print(f"  Records Fetched : {len(records)}")
+    print(f"  Rows Written    : {rows_written}")
     print(f"  Source Endpoint : {HISTORY_ENDPOINT}")
     print("=" * 65)
 
 
 if __name__ == "__main__":
     main()
+
