@@ -39,3 +39,9 @@ frontend/dist-ssr/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Generated Exports & Scratch Data
+*.xlsx
+~$*
+posts_data.csv
+
