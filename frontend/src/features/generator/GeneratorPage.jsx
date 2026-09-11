@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { postApi } from '../../api/postApi';
+import { formatErrorMessage } from '../../utils/formatters';
 import { InputForm } from './InputForm';
 import { PostPreview } from './PostPreview';
 import { RefinementToolbar } from './RefinementToolbar';
@@ -83,7 +84,7 @@ export const GeneratorPage = ({ restoredItem, onClearRestoredItem }) => {
     },
     onError: (err) => {
       console.error('Generation Error:', err);
-      const detail = err.response?.data?.detail || err.message || 'Unable to generate your post. Please check backend connection.';
+      const detail = formatErrorMessage(err, 'Unable to generate your post. Please check backend connection.');
       setErrorMsg(detail);
       setCurrentPost(null);
     }
@@ -139,7 +140,7 @@ export const GeneratorPage = ({ restoredItem, onClearRestoredItem }) => {
       }
     },
     onError: (err) => {
-      const detail = err.response?.data?.detail || err.message || 'Failed to refine post.';
+      const detail = formatErrorMessage(err, 'Failed to refine post.');
       setErrorMsg(detail);
     }
   });
@@ -153,7 +154,7 @@ export const GeneratorPage = ({ restoredItem, onClearRestoredItem }) => {
       triggerToast('Quality breakdown updated!', 'success');
     },
     onError: (err) => {
-      const detail = err.response?.data?.detail || err.message || 'Failed to analyze post quality.';
+      const detail = formatErrorMessage(err, 'Failed to analyze post quality.');
       setErrorMsg(detail);
     }
   });

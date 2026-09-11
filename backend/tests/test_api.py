@@ -60,3 +60,50 @@ async def test_generate_and_refine_flow():
         data = res_gen.json()
         assert "post" in data
         assert "metadata" in data
+
+
+@pytest.mark.asyncio
+async def test_generate_short_topic_ai():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        gen_payload = {
+            "topic": "AI",
+            "provider": "mock"
+        }
+        res_gen = await ac.post("/api/generate", json=gen_payload)
+        assert res_gen.status_code == 200
+        data = res_gen.json()
+        assert "post" in data
+        assert data["metadata"]["topic"] == "AI"
+
+
+@pytest.mark.asyncio
+async def test_generate_null_optional_fields():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        gen_payload = {
+            "topic": "Machine Learning",
+            "target_audience": None,
+            "personal_context": None,
+            "key_points": None,
+            "writing_style": None,
+            "writing_samples": None,
+            "provider": "mock"
+        }
+        res_gen = await ac.post("/api/generate", json=gen_payload)
+        assert res_gen.status_code == 200
+        data = res_gen.json()
+        assert "post" in data
+
+
+@pytest.mark.asyncio
+async def test_generate_missing_topic_returns_422():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        gen_payload = {
+            "topic": "   ",
+            "provider": "mock"
+        }
+        res_gen = await ac.post("/api/generate", json=gen_payload)
+        assert res_gen.status_code == 422
+        data = res_gen.json()
+        assert "detail" in data
+        assert isinstance(data["detail"], list)
+

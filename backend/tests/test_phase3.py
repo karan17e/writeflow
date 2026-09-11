@@ -103,7 +103,7 @@ async def test_missing_groq_api_key_configuration_error(monkeypatch):
 async def test_validation_error_handling():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         payload = {
-            "topic": "a"
+            "topic": ""
         }
         response = await ac.post("/api/generate", json=payload)
     assert response.status_code == 422

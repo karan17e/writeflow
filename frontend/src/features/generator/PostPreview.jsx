@@ -67,13 +67,19 @@ export const PostPreview = ({
 
   // Error state
   if (error) {
+    const renderableError = typeof error === 'string'
+      ? error
+      : (Array.isArray(error)
+        ? error.map((e) => (typeof e === 'object' ? (e.msg || JSON.stringify(e)) : String(e))).join(' | ')
+        : (error?.message || String(error)));
+
     return (
       <div className="saas-card border-rose-200 p-8 flex flex-col items-center justify-center text-center min-h-[440px]">
         <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 mb-3">
           <AlertCircle className="w-6 h-6" />
         </div>
         <h3 className="text-base font-bold text-slate-900 mb-1">Generation Request Error</h3>
-        <p className="text-xs text-rose-600 max-w-md leading-relaxed">{error}</p>
+        <p className="text-xs text-rose-600 max-w-md leading-relaxed">{renderableError}</p>
       </div>
     );
   }
