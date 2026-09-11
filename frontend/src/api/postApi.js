@@ -74,6 +74,36 @@ export const postApi = {
     return data;
   },
 
+  exportHistoryExcel: async () => {
+    const response = await client.get('/history/export', {
+      responseType: 'blob',
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const defaultTs = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    let filename = `writeflow_history_export_${defaultTs}.xlsx`;
+
+    const cdHeader = response.headers['content-disposition'];
+    if (cdHeader) {
+      const match = cdHeader.match(/filename="?([^";]+)"?/);
+      if (match && match[1]) {
+        filename = match[1];
+      }
+    }
+
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  },
+
+
+
   // Backward compatibility aliases
   listPosts: async (skip = 0, limit = 50) => {
     const { data } = await client.get('/history', { params: { skip, limit } });

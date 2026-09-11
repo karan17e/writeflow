@@ -107,3 +107,23 @@ async def test_generate_missing_topic_returns_422():
         assert "detail" in data
         assert isinstance(data["detail"], list)
 
+
+@pytest.mark.asyncio
+async def test_history_excel_export_endpoint():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        # 1. Generate a post so history has records
+        gen_payload = {
+            "topic": "Excel Export Synchronization Test",
+            "provider": "mock"
+        }
+        res_gen = await ac.post("/api/generate", json=gen_payload)
+        assert res_gen.status_code == 200
+
+        # 2. Export Excel via GET /api/history/export
+        res_export = await ac.get("/api/history/export")
+        assert res_export.status_code == 200
+        assert res_export.headers["content-type"] == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        assert "attachment; filename=" in res_export.headers["content-disposition"]
+        assert len(res_export.content) > 1000
+
+

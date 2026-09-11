@@ -16,7 +16,8 @@ import {
   Copy,
   RotateCcw,
   Sparkles,
-  Filter
+  Filter,
+  Download
 } from 'lucide-react';
 
 export const HistoryPage = ({ onRestorePost, onNavigateToGenerator }) => {
@@ -34,10 +35,24 @@ export const HistoryPage = ({ onRestorePost, onNavigateToGenerator }) => {
   // Toast feedback
   const [toastMessage, setToastMessage] = useState('');
   const [detailCopied, setDetailCopied] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const triggerToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      await postApi.exportHistoryExcel();
+      triggerToast('Excel export downloaded successfully!');
+    } catch (err) {
+      console.error('Failed to export Excel:', err);
+      triggerToast('Failed to download Excel export. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Fetch History from API
@@ -115,15 +130,27 @@ export const HistoryPage = ({ onRestorePost, onNavigateToGenerator }) => {
         </div>
 
         {historyItems.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowClearAllModal(true)}
-            icon={Trash2}
-            className="text-rose-600 border-rose-200 hover:bg-rose-50 self-start sm:self-auto"
-          >
-            Clear All History
-          </Button>
+          <div className="flex items-center gap-2.5 self-start sm:self-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportExcel}
+              isLoading={isExporting}
+              icon={Download}
+              className="text-emerald-700 border-emerald-300 hover:bg-emerald-50"
+            >
+              Export Excel
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowClearAllModal(true)}
+              icon={Trash2}
+              className="text-rose-600 border-rose-200 hover:bg-rose-50"
+            >
+              Clear All History
+            </Button>
+          </div>
         )}
       </div>
 

@@ -1,5 +1,6 @@
+import datetime
 from typing import Dict, Any, List, Optional
-from fastapi import APIRouter, HTTPException, Depends, Query, status
+from fastapi import APIRouter, HTTPException, Depends, Query, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.schemas.post import (
@@ -11,6 +12,7 @@ from app.schemas.post import (
 )
 from app.services.post_service import PostService
 from app.services.history_service import HistoryService
+from app.services.excel_export_service import ExcelExportService
 from app.configuration import logger
 
 router = APIRouter(tags=["WriteFlow Posts"])
@@ -66,8 +68,36 @@ async def list_history(
         )
 
 
+@router.get("/history/export")
+async def export_history_excel(
+    db: AsyncSession = Depends(get_db)
+):
+    logger.info("BACKEND REQUEST RECEIVED: GET /api/history/export")
+    try:
+        records = await HistoryService.get_all(db, limit=1000, skip=0)
+        excel_bytes = ExcelExportService.generate_excel_bytes(records)
+        
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"writeflow_history_export_{timestamp}.xlsx"
+        
+        return Response(
+            content=excel_bytes,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"'
+            }
+        )
+    except Exception as e:
+        logger.exception("Failed to export post history to Excel")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while exporting history to Excel: {str(e)}"
+        )
+
+
 @router.get("/history/{history_id}", response_model=Dict[str, Any], status_code=status.HTTP_200_OK)
 async def get_history_item(history_id: str, db: AsyncSession = Depends(get_db)):
+
     logger.info(f"BACKEND REQUEST RECEIVED: GET /api/history/{history_id}")
     item = await HistoryService.get_by_id(db, history_id)
     if not item:
